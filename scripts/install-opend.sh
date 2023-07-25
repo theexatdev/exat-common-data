@@ -1,87 +1,87 @@
 #!/bin/bash
 
-# sudo apt-get update -y
+sudo apt-get update -y
 
-# ## install postgresql
-# sudo apt-get install -y postgresql
+## install postgresql
+sudo apt-get install -y postgresql
 
-# ## install Apache Solr
-# sudo apt-get install -y openjdk-8-jdk
-# sudo update-alternatives --set java /usr/lib/jvm/java-8-openjdk-amd64/jre/bin/java
-# wget http://archive.apache.org/dist/lucene/solr/6.5.1/solr-6.5.1.tgz
-# tar xzf solr-6.5.1.tgz solr-6.5.1/bin/install_solr_service.sh --strip-components=2
-# sudo bash ./install_solr_service.sh solr-6.5.1.tgz
+## install Apache Solr
+sudo apt-get install -y openjdk-8-jdk
+sudo update-alternatives --set java /usr/lib/jvm/java-8-openjdk-amd64/jre/bin/java
+wget http://archive.apache.org/dist/lucene/solr/6.5.1/solr-6.5.1.tgz
+tar xzf solr-6.5.1.tgz solr-6.5.1/bin/install_solr_service.sh --strip-components=2
+sudo bash ./install_solr_service.sh solr-6.5.1.tgz
 
-# ## packages for CKAN
-# sudo apt-get install -y python-dev libpq-dev redis-server git build-essential
-# sudo add-apt-repository universe
-# sudo apt install -y python2
-# sudo update-alternatives --install /usr/bin/python python /usr/bin/python2 1
-# sudo update-alternatives --config python
-# curl https://bootstrap.pypa.io/pip/2.7/get-pip.py --output get-pip.py
-# sudo python2 get-pip.py
-# sudo apt install -y virtualenv
+## packages for CKAN
+sudo apt-get install -y python-dev libpq-dev redis-server git build-essential
+sudo add-apt-repository universe
+sudo apt install -y python2
+sudo update-alternatives --install /usr/bin/python python /usr/bin/python2 1
+sudo update-alternatives --config python
+curl https://bootstrap.pypa.io/pip/2.7/get-pip.py --output get-pip.py
+sudo python2 get-pip.py
+sudo apt install -y virtualenv
 
-# ## prepare directory
-# mkdir -p ~/ckan/lib
-# mkdir -p ~/ckan/var
-# mkdir -p ~/ckan/etc
+## prepare directory
+mkdir -p ~/ckan/lib
+mkdir -p ~/ckan/var
+mkdir -p ~/ckan/etc
 
-# # ckan path
-# sudo mkdir -p /usr/lib/ckan/default
-# sudo chown -R `whoami` /usr/lib/ckan/default
+# ckan path
+sudo mkdir -p /usr/lib/ckan/default
+sudo chown -R `whoami` /usr/lib/ckan/default
 
-# # storage path
-# sudo mkdir -p /var/lib/ckan/default
-# sudo chown -R `whoami` /var/lib/ckan/default && sudo chmod -R 775 /var/lib/ckan
+# storage path
+sudo mkdir -p /var/lib/ckan/default
+sudo chown -R `whoami` /var/lib/ckan/default && sudo chmod -R 775 /var/lib/ckan
 
-# # etc path
-# sudo mkdir -p /etc/ckan/default
-# sudo chown -R `whoami` /etc/ckan/default
+# etc path
+sudo mkdir -p /etc/ckan/default
+sudo chown -R `whoami` /etc/ckan/default
 
-# ## config Apache Solr
-# sudo su solr
-# cd /opt/solr/bin
-# ./solr create -c ckan
-# cd /var/solr/data/ckan/conf
-# mv solrconfig.xml solrconfig.xml.bak
-# wget https://raw.githubusercontent.com/ckan/ckan/ckan-2.9.5/contrib/docker/solr/solrconfig.xml
-# rm managed-schema
-# ln -s /usr/lib/ckan/default/src/ckan/ckan/config/solr/schema.xml schema.xml
-# exit
-# sudo service solr restart
-# cd ~
+## config Apache Solr
+sudo su solr
+cd /opt/solr/bin
+./solr create -c ckan
+cd /var/solr/data/ckan/conf
+mv solrconfig.xml solrconfig.xml.bak
+wget https://raw.githubusercontent.com/ckan/ckan/ckan-2.9.5/contrib/docker/solr/solrconfig.xml
+rm managed-schema
+ln -s /usr/lib/ckan/default/src/ckan/ckan/config/solr/schema.xml schema.xml
+exit
+sudo service solr restart
+cd ~
 
-# ## python environment
-# virtualenv --python=python2 /usr/lib/ckan/default
-# source /usr/lib/ckan/default/bin/activate
-# cd /usr/lib/ckan/default
-# pip install --upgrade pip
-# pip install setuptools==44.1.0
-# deactivate
+## python environment
+virtualenv --python=python2 /usr/lib/ckan/default
+source /usr/lib/ckan/default/bin/activate
+cd /usr/lib/ckan/default
+pip install --upgrade pip
+pip install setuptools==44.1.0
+deactivate
 
-# ## install CKAN
-# source /usr/lib/ckan/default/bin/activate
-# cd /usr/lib/ckan/default
-# pip install -e 'git+https://github.com/ckan/ckan.git@ckan-2.9.5#egg=ckan[requirements-py2]'
+## install CKAN
+source /usr/lib/ckan/default/bin/activate
+cd /usr/lib/ckan/default
+pip install -e 'git+https://github.com/ckan/ckan.git@ckan-2.9.5#egg=ckan[requirements-py2]'
 
-# pip install -e 'git+https://github.com/ckan/ckanext-pdfview.git#egg=ckanext-pdfview'
-# pip install -e 'git+https://gitlab.nectec.or.th/opend/ckanext-scheming.git#egg=ckanext-scheming'
-# pip install -e 'git+https://github.com/ckan/ckanext-hierarchy.git#egg=ckanext-hierarchy'
-# pip install -r src/ckanext-hierarchy/requirements.txt
-# pip install -e 'git+https://github.com/ckan/ckanext-dcat.git@v1.4.0#egg=ckanext-dcat'
-# pip install -r src/ckanext-dcat/requirements-py2.txt
-# pip install -e 'git+https://gitlab.nectec.or.th/opend/ckanext-thai_gdc.git#egg=ckanext-thai_gdc'
-# pip install -r src/ckanext-thai-gdc/requirements.txt
-# pip install -e 'git+https://gitlab.nectec.or.th/opend/ckanext-xloader.git#egg=ckanext-xloader'
-# pip install -r src/ckanext-xloader/requirements.txt
-# pip install -U requests[security]
-# pip install -e 'git+https://gitlab.nectec.or.th/opend/ckanext-dga-stats.git#egg=ckanext-dga-stats'
-# pip install -e 'git+https://gitlab.nectec.or.th/opend/ckanext-discovery.git#egg=ckanext-discovery'
-# pip install -e 'git+https://gitlab.nectec.or.th/opend/ckanext-pages.git#egg=ckanext-pages'
-# pip install -r src/ckanext-pages/requirements.txt
+pip install -e 'git+https://github.com/ckan/ckanext-pdfview.git#egg=ckanext-pdfview'
+pip install -e 'git+https://gitlab.nectec.or.th/opend/ckanext-scheming.git#egg=ckanext-scheming'
+pip install -e 'git+https://github.com/ckan/ckanext-hierarchy.git#egg=ckanext-hierarchy'
+pip install -r src/ckanext-hierarchy/requirements.txt
+pip install -e 'git+https://github.com/ckan/ckanext-dcat.git@v1.4.0#egg=ckanext-dcat'
+pip install -r src/ckanext-dcat/requirements-py2.txt
+pip install -e 'git+https://gitlab.nectec.or.th/opend/ckanext-thai_gdc.git#egg=ckanext-thai_gdc'
+pip install -r src/ckanext-thai-gdc/requirements.txt
+pip install -e 'git+https://gitlab.nectec.or.th/opend/ckanext-xloader.git#egg=ckanext-xloader'
+pip install -r src/ckanext-xloader/requirements.txt
+pip install -U requests[security]
+pip install -e 'git+https://gitlab.nectec.or.th/opend/ckanext-dga-stats.git#egg=ckanext-dga-stats'
+pip install -e 'git+https://gitlab.nectec.or.th/opend/ckanext-discovery.git#egg=ckanext-discovery'
+pip install -e 'git+https://gitlab.nectec.or.th/opend/ckanext-pages.git#egg=ckanext-pages'
+pip install -r src/ckanext-pages/requirements.txt
 
-# deactivate
+deactivate
 
 ## create postgresql user and db
 dbpassword="ckan1234"
