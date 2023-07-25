@@ -91,8 +91,9 @@ fi
 CKAN_INI="/etc/ckan/default/ckan.ini"
 source /usr/lib/ckan/default/bin/activate
 cd /usr/lib/ckan/default
+ckan generate config /etc/ckan/default/ckan.ini
 ckan config-tool ${CKAN_INI} "sqlalchemy.url = postgresql://ckan_default:${PGPASSWORD}@localhost/ckan_default"
-ckan config-tool ${CKAN_INI} "ckan.datastore.write_url = postgresql://ckan_default:${${PGPASSWORD}}@localhost/datastore_default"
+ckan config-tool ${CKAN_INI} "ckan.datastore.write_url = postgresql://ckan_default:${PGPASSWORD}@localhost/datastore_default"
 ckan config-tool ${CKAN_INI} "ckan.datastore.read_url = postgresql://datastore_default:${PGPASSWORD}@localhost/datastore_default"
 ckan config-tool ${CKAN_INI} "ckan.site_url = http://${host_ip}"
 ckan config-tool ${CKAN_INI} "solr_url = http://127.0.0.1:8983/solr/ckan"
