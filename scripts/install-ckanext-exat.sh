@@ -6,12 +6,13 @@ if [ -z "$GIT_URL" ]; then
 fi
 
 source /usr/lib/ckan/default/bin/activate
-cd /usr/lib/ckan/default
+cd /usr/lib/ckan/default/src
 git clone ${GIT_URL} ckanext-exat
 cd /usr/lib/ckan/default/src/ckanext-exat
 pip install -e .
 pip install -r requirements.txt
 
+cd /usr/lib/ckan/default
 CKAN_INI="/etc/ckan/default/ckan.ini"
 ckan config-tool ${CKAN_INI} "ckanext.exat.security_center.ws_endpoint = https://exatservices.exat.co.th/Services_Security"
 ckan config-tool ${CKAN_INI} "ckanext.exat.security_center.client = ckanext.exat.lib.security_center:SoapSecurityClient"
