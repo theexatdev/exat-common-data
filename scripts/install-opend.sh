@@ -73,11 +73,14 @@
 
 # ## create postgresql user and db
 dbpassword="ckan1234"
-export PGPASSWORD="ckan1234"
+export PGPASSWORD="$dbpassword"
+
 sudo -u postgres createuser -S -D -R -P ckan_default
 sudo -u postgres createdb -O ckan_default ckan_default -E utf-8
 sudo -u postgres createdb -O ckan_default datastore_default -E utf-8
 sudo -u postgres createuser -S -D -R -P -l datastore_default
+
+unset PGPASSWORD
 
 ## config who.ini
 sudo ln -s /usr/lib/ckan/default/src/ckan/who.ini /etc/ckan/default/who.ini
