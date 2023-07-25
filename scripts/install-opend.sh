@@ -151,7 +151,7 @@ stopsignal=QUIT
 EOF
 
 ## nginx
-sudo apt-get install nginx
+sudo apt-get install -y nginx
 #sudo vi /etc/nginx/sites-available/ckan
 cat << EOF | sudo tee "/etc/nginx/sites-available/ckan" > /dev/null
 proxy_cache_path /var/cache/nginx/proxycache levels=1:2 keys_zone=cache:30m max_size=250m;
