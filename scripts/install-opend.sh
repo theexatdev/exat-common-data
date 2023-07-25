@@ -125,65 +125,74 @@
 ### END STATE 2 ###
 ### STATE 3 ###
 
-## setup uwsgi
-source /usr/lib/ckan/default/bin/activate
-pip install uwsgi
-deactivate
-cp /usr/lib/ckan/default/src/ckan/ckan-uwsgi.ini /etc/ckan/default/
-cp /usr/lib/ckan/default/src/ckan/wsgi.py /etc/ckan/default/
+# ## setup uwsgi
+# source /usr/lib/ckan/default/bin/activate
+# pip install uwsgi
+# deactivate
+# cp /usr/lib/ckan/default/src/ckan/ckan-uwsgi.ini /etc/ckan/default/
+# cp /usr/lib/ckan/default/src/ckan/wsgi.py /etc/ckan/default/
 
-# setup supervisor
-sudo apt-get install -y supervisor
-sudo mkdir -p /var/log/ckan
-#sudo vi /etc/supervisor/conf.d/ckan-uwsgi.conf
-cat << EOF | sudo tee "/etc/supervisor/conf.d/ckan-uwsgi.conf" > /dev/null
-[program:ckan-uwsgi]
-command=/usr/lib/ckan/default/bin/uwsgi -i /etc/ckan/default/ckan-uwsgi.ini
-numprocs=1
-process_name=%(program_name)s-%(process_num)02d
-stdout_logfile=/var/log/ckan/ckan-uwsgi.stdout.log
-stderr_logfile=/var/log/ckan/ckan-uwsgi.stderr.log
-autostart=true
-autorestart=true
-startsecs=10
-stopwaitsecs = 600
-stopsignal=QUIT
-EOF
+# # setup supervisor
+# sudo apt-get install -y supervisor
+# sudo mkdir -p /var/log/ckan
+# #sudo vi /etc/supervisor/conf.d/ckan-uwsgi.conf
+# cat << EOF | sudo tee "/etc/supervisor/conf.d/ckan-uwsgi.conf" > /dev/null
+# [program:ckan-uwsgi]
+# command=/usr/lib/ckan/default/bin/uwsgi -i /etc/ckan/default/ckan-uwsgi.ini
+# numprocs=1
+# process_name=%(program_name)s-%(process_num)02d
+# stdout_logfile=/var/log/ckan/ckan-uwsgi.stdout.log
+# stderr_logfile=/var/log/ckan/ckan-uwsgi.stderr.log
+# autostart=true
+# autorestart=true
+# startsecs=10
+# stopwaitsecs = 600
+# stopsignal=QUIT
+# EOF
 
-## nginx
-sudo apt-get install -y nginx
-#sudo vi /etc/nginx/sites-available/ckan
-cat << 'EOF' | sudo tee "/etc/nginx/sites-available/ckan" > /dev/null
-proxy_cache_path /var/cache/nginx/proxycache levels=1:2 keys_zone=cache:30m max_size=250m;
-proxy_temp_path /tmp/nginx_proxy 1 2;
+# ## nginx
+# sudo apt-get install -y nginx
+# #sudo vi /etc/nginx/sites-available/ckan
+# cat << 'EOF' | sudo tee "/etc/nginx/sites-available/ckan" > /dev/null
+# proxy_cache_path /var/cache/nginx/proxycache levels=1:2 keys_zone=cache:30m max_size=250m;
+# proxy_temp_path /tmp/nginx_proxy 1 2;
 
-server {
-    client_max_body_size 100M;
-    server_tokens off;
-    location / {
-        proxy_pass http://127.0.0.1:8080/;
-        proxy_set_header X-Forwarded-For $remote_addr;
-        proxy_set_header Host $host;
-        proxy_cache cache;
-        proxy_cache_bypass $cookie_auth_tkt;
-        proxy_no_cache $cookie_auth_tkt;
-        proxy_cache_valid 30m;
-        proxy_cache_key ${host}${scheme}${proxy_host}$request_uri;
-        # In emergency comment out line to force caching
-        # proxy_ignore_headers X-Accel-Expires Expires Cache-Control;
-    }
-}
-EOF
+# server {
+#     client_max_body_size 100M;
+#     server_tokens off;
+#     location / {
+#         proxy_pass http://127.0.0.1:8080/;
+#         proxy_set_header X-Forwarded-For $remote_addr;
+#         proxy_set_header Host $host;
+#         proxy_cache cache;
+#         proxy_cache_bypass $cookie_auth_tkt;
+#         proxy_no_cache $cookie_auth_tkt;
+#         proxy_cache_valid 30m;
+#         proxy_cache_key ${host}${scheme}${proxy_host}$request_uri;
+#         # In emergency comment out line to force caching
+#         # proxy_ignore_headers X-Accel-Expires Expires Cache-Control;
+#     }
+# }
+# EOF
 
-sudo rm -r /etc/nginx/sites-enabled/default
-sudo ln -s /etc/nginx/sites-available/ckan /etc/nginx/sites-enabled/ckan
-sudo mkdir -p /var/cache/nginx/proxycache && sudo chown www-data /var/cache/nginx/proxycache
+# sudo rm -r /etc/nginx/sites-enabled/default
+# sudo ln -s /etc/nginx/sites-available/ckan /etc/nginx/sites-enabled/ckan
+# sudo mkdir -p /var/cache/nginx/proxycache && sudo chown www-data /var/cache/nginx/proxycache
 
-# file permissions
-sudo chown -R www-data:www-data /var/lib/ckan
-sudo chown -R www-data:www-data /usr/lib/ckan/default/src/ckan/ckan/public
-sudo chown -R www-data:www-data /var/lib/ckan/default
+# # file permissions
+# sudo chown -R www-data:www-data /var/lib/ckan
+# sudo chown -R www-data:www-data /usr/lib/ckan/default/src/ckan/ckan/public
+# sudo chown -R www-data:www-data /var/lib/ckan/default
 
-# restart service
-sudo supervisorctl reload
-sudo service nginx restart
+# # restart service
+# sudo supervisorctl reload
+# sudo service nginx restart
+
+### END STATE 3 ###
+### STATE 4 ###
+
+## cron job
+cronjob="@hourly /usr/lib/ckan/default/bin/ckan -c /etc/ckan/default/ckan.ini tracking update && /usr/lib/ckan/default/bin/ckan -c /etc/ckan/default/ckan.ini search-index rebuild -r"
+
+# Add the cronjob entry to the current user's crontab
+(crontab -l ; echo "$cronjob") | crontab -
