@@ -4,4 +4,4 @@
 echo "Please enter url"
 read url
 
-echo url
+echo $url
