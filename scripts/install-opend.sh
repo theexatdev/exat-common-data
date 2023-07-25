@@ -118,7 +118,6 @@ ckan config-tool ${CKAN_INI} "ckanext.exat.assign_personnel_organization = false
 ckan config-tool ${CKAN_INI} "ckanext.exat.override_stats = true"
 
 ckan -c ${CKAN_INI} db init
-ckan -c ${CKAN_INI} sysadmin add ckan_admin
 ckan -c ${CKAN_INI} datastore set-permissions | sudo -u postgres psql --set ON_ERROR_STOP=1
 
 deactivate
