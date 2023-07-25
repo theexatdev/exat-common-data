@@ -153,7 +153,7 @@ EOF
 ## nginx
 sudo apt-get install -y nginx
 #sudo vi /etc/nginx/sites-available/ckan
-cat << EOF | sudo tee "/etc/nginx/sites-available/ckan" > /dev/null
+cat << 'EOF' | sudo tee "/etc/nginx/sites-available/ckan" > /dev/null
 proxy_cache_path /var/cache/nginx/proxycache levels=1:2 keys_zone=cache:30m max_size=250m;
 proxy_temp_path /tmp/nginx_proxy 1 2;
 
@@ -168,7 +168,9 @@ server {
         proxy_cache_bypass $cookie_auth_tkt;
         proxy_no_cache $cookie_auth_tkt;
         proxy_cache_valid 30m;
-        proxy_cache_key $host$scheme$proxy_host$request_uri;
+        proxy_cache_key ${host}${scheme}${proxy_host}$request_uri;
+        # In emergency comment out line to force caching
+        # proxy_ignore_headers X-Accel-Expires Expires Cache-Control;
     }
 }
 EOF
