@@ -122,63 +122,66 @@ ckan -c ${CKAN_INI} datastore set-permissions | sudo -u postgres psql --set ON_E
 
 deactivate
 
-## setup uwsgi
-source /usr/lib/ckan/default/bin/activate
-pip install uwsgi
-deactivate
-cp /usr/lib/ckan/default/src/ckan/ckan-uwsgi.ini /etc/ckan/default/
-cp /usr/lib/ckan/default/src/ckan/wsgi.py /etc/ckan/default/
+### END STATE 2 ###
+### STATE 3 ###
 
-# setup supervisor
-sudo apt-get install -y supervisor
-sudo mkdir -p /var/log/ckan
-#sudo vi /etc/supervisor/conf.d/ckan-uwsgi.conf
-sudo cat << EOF > "/etc/supervisor/conf.d/ckan-uwsgi.conf"
-[program:ckan-uwsgi]
-command=/usr/lib/ckan/default/bin/uwsgi -i /etc/ckan/default/ckan-uwsgi.ini
-numprocs=1
-process_name=%(program_name)s-%(process_num)02d
-stdout_logfile=/var/log/ckan/ckan-uwsgi.stdout.log
-stderr_logfile=/var/log/ckan/ckan-uwsgi.stderr.log
-autostart=true
-autorestart=true
-startsecs=10
-stopwaitsecs = 600
-stopsignal=QUIT
-EOF
+# ## setup uwsgi
+# source /usr/lib/ckan/default/bin/activate
+# pip install uwsgi
+# deactivate
+# cp /usr/lib/ckan/default/src/ckan/ckan-uwsgi.ini /etc/ckan/default/
+# cp /usr/lib/ckan/default/src/ckan/wsgi.py /etc/ckan/default/
 
-## nginx
-sudo apt-get install nginx
-#sudo vi /etc/nginx/sites-available/ckan
-sudo cat << EOF > "/etc/nginx/sites-available/ckan"
-proxy_cache_path /var/cache/nginx/proxycache levels=1:2 keys_zone=cache:30m max_size=250m;
-proxy_temp_path /tmp/nginx_proxy 1 2;
+# # setup supervisor
+# sudo apt-get install -y supervisor
+# sudo mkdir -p /var/log/ckan
+# #sudo vi /etc/supervisor/conf.d/ckan-uwsgi.conf
+# sudo cat << EOF > "/etc/supervisor/conf.d/ckan-uwsgi.conf"
+# [program:ckan-uwsgi]
+# command=/usr/lib/ckan/default/bin/uwsgi -i /etc/ckan/default/ckan-uwsgi.ini
+# numprocs=1
+# process_name=%(program_name)s-%(process_num)02d
+# stdout_logfile=/var/log/ckan/ckan-uwsgi.stdout.log
+# stderr_logfile=/var/log/ckan/ckan-uwsgi.stderr.log
+# autostart=true
+# autorestart=true
+# startsecs=10
+# stopwaitsecs = 600
+# stopsignal=QUIT
+# EOF
 
-server {
-    client_max_body_size 100M;
-    server_tokens off;
-    location / {
-        proxy_pass http://127.0.0.1:8080/;
-        proxy_set_header X-Forwarded-For $remote_addr;
-        proxy_set_header Host $host;
-        proxy_cache cache;
-        proxy_cache_bypass $cookie_auth_tkt;
-        proxy_no_cache $cookie_auth_tkt;
-        proxy_cache_valid 30m;
-        proxy_cache_key $host$scheme$proxy_host$request_uri;
-    }
-}
-EOF
+# ## nginx
+# sudo apt-get install nginx
+# #sudo vi /etc/nginx/sites-available/ckan
+# sudo cat << EOF > "/etc/nginx/sites-available/ckan"
+# proxy_cache_path /var/cache/nginx/proxycache levels=1:2 keys_zone=cache:30m max_size=250m;
+# proxy_temp_path /tmp/nginx_proxy 1 2;
 
-sudo rm -r /etc/nginx/sites-enabled/default
-sudo ln -s /etc/nginx/sites-available/ckan /etc/nginx/sites-enabled/ckan
-sudo mkdir -p /var/cache/nginx/proxycache && sudo chown www-data /var/cache/nginx/proxycache
+# server {
+#     client_max_body_size 100M;
+#     server_tokens off;
+#     location / {
+#         proxy_pass http://127.0.0.1:8080/;
+#         proxy_set_header X-Forwarded-For $remote_addr;
+#         proxy_set_header Host $host;
+#         proxy_cache cache;
+#         proxy_cache_bypass $cookie_auth_tkt;
+#         proxy_no_cache $cookie_auth_tkt;
+#         proxy_cache_valid 30m;
+#         proxy_cache_key $host$scheme$proxy_host$request_uri;
+#     }
+# }
+# EOF
 
-# file permissions
-sudo chown -R www-data:www-data /var/lib/ckan
-sudo chown -R www-data:www-data /usr/lib/ckan/default/src/ckan/ckan/public
-sudo chown -R www-data:www-data /var/lib/ckan/default
+# sudo rm -r /etc/nginx/sites-enabled/default
+# sudo ln -s /etc/nginx/sites-available/ckan /etc/nginx/sites-enabled/ckan
+# sudo mkdir -p /var/cache/nginx/proxycache && sudo chown www-data /var/cache/nginx/proxycache
 
-# restart service
-sudo supervisorctl reload
-sudo service nginx restart
+# # file permissions
+# sudo chown -R www-data:www-data /var/lib/ckan
+# sudo chown -R www-data:www-data /usr/lib/ckan/default/src/ckan/ckan/public
+# sudo chown -R www-data:www-data /var/lib/ckan/default
+
+# # restart service
+# sudo supervisorctl reload
+# sudo service nginx restart
