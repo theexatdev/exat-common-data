@@ -23,7 +23,6 @@ pip install -r src/ckanext-pages/requirements.txt
 # config ckan
 dbpassword="ckan1234"
 CKAN_INI="/etc/ckan/default/ckan.ini"
-ckan generate config /etc/ckan/default/ckan.ini
 ckan config-tool ${CKAN_INI} "ckan.plugins = discovery search_suggestions thai_gdc stats image_view text_view recline_view resource_proxy webpage_view datastore xloader dga_stats scheming_datasets pdf_view hierarchy_display hierarchy_form dcat dcat_json_interface structured_data pages"
 ckan config-tool ${CKAN_INI} "ckan.views.default_views = image_view text_view recline_view webpage_view pdf_view"
 ckan config-tool ${CKAN_INI} "ckanext.xloader.jobs_db.uri = postgresql://ckan_default:${dbpassword}@localhost/ckan_default"
