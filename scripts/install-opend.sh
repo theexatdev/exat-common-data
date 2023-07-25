@@ -72,13 +72,12 @@
 ### STATE 2 ###
 
 # ## create postgresql user and db
+dbpassword="ckan1234"
 export PGPASSWORD="ckan1234"
 sudo -u postgres createuser -S -D -R -P ckan_default
-unset PGPASSWORD
 sudo -u postgres createdb -O ckan_default ckan_default -E utf-8
 sudo -u postgres createdb -O ckan_default datastore_default -E utf-8
 sudo -u postgres createuser -S -D -R -P -l datastore_default
-unset PGPASSWORD
 
 ## config who.ini
 sudo ln -s /usr/lib/ckan/default/src/ckan/who.ini /etc/ckan/default/who.ini
@@ -98,9 +97,9 @@ CKAN_INI="/etc/ckan/default/ckan.ini"
 source /usr/lib/ckan/default/bin/activate
 cd /usr/lib/ckan/default
 ckan generate config /etc/ckan/default/ckan.ini
-ckan config-tool ${CKAN_INI} "sqlalchemy.url = postgresql://ckan_default:${PGPASSWORD}@localhost/ckan_default"
-ckan config-tool ${CKAN_INI} "ckan.datastore.write_url = postgresql://ckan_default:${PGPASSWORD}@localhost/datastore_default"
-ckan config-tool ${CKAN_INI} "ckan.datastore.read_url = postgresql://datastore_default:${PGPASSWORD}@localhost/datastore_default"
+ckan config-tool ${CKAN_INI} "sqlalchemy.url = postgresql://ckan_default:${dbpassword}@localhost/ckan_default"
+ckan config-tool ${CKAN_INI} "ckan.datastore.write_url = postgresql://ckan_default:${dbpassword}@localhost/datastore_default"
+ckan config-tool ${CKAN_INI} "ckan.datastore.read_url = postgresql://datastore_default:${dbpassword}@localhost/datastore_default"
 ckan config-tool ${CKAN_INI} "ckan.site_url = http://${host_ip}"
 ckan config-tool ${CKAN_INI} "solr_url = http://127.0.0.1:8983/solr/ckan"
 ckan config-tool ${CKAN_INI} "ckan.redis.url = redis://localhost:6379/0"
