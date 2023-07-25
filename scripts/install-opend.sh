@@ -1,5 +1,7 @@
 #!/bin/bash
 
+### STATE 1 ###
+
 sudo apt-get update -y
 
 ## install postgresql
@@ -39,13 +41,6 @@ sudo chown -R `whoami` /var/lib/ckan/default && sudo chmod -R 775 /var/lib/ckan
 sudo mkdir -p /etc/ckan/default
 sudo chown -R `whoami` /etc/ckan/default
 
-## create postgresql user and db
-PGPASSWORD="ckan1234"
-sudo -u postgres createuser -S -D -R -P -W ${PGPASSWORD} ckan_default
-sudo -u postgres createdb -O ckan_default ckan_default -E utf-8
-sudo -u postgres createdb -O ckan_default datastore_default -E utf-8
-sudo -u postgres createuser -S -D -R -P -l -W ${PGPASSWORD} datastore_default
-
 ## config Apache Solr
 sudo su solr
 cd /opt/solr/bin
@@ -67,110 +62,119 @@ pip install --upgrade pip
 pip install setuptools==44.1.0
 deactivate
 
-
 ## install CKAN
 source /usr/lib/ckan/default/bin/activate
 cd /usr/lib/ckan/default
 pip install -e 'git+https://github.com/ckan/ckan.git@ckan-2.9.5#egg=ckan[requirements-py2]'
 deactivate
 
-## config who.ini
-sudo ln -s /usr/lib/ckan/default/src/ckan/who.ini /etc/ckan/default/who.ini
-sudo chown -R `whoami` /etc/ckan/
+### END STATE 1 ###
+### STATE 2 ###
 
-# Get the host IP address based on the operating system
-if [[ "$os" == "Darwin" ]]; then
-    # macOS
-    host_ip=$(ifconfig | grep "inet " | grep -Fv 127.0.0.1 | awk '{print $2}')
-else
-    # Ubuntu and other Linux distributions
-    host_ip=$(hostname -I | awk '{print $1}')
-fi
+# ## create postgresql user and db
+# PGPASSWORD="ckan1234"
+# sudo -u postgres createuser -S -D -R -P -W ${PGPASSWORD} ckan_default
+# sudo -u postgres createdb -O ckan_default ckan_default -E utf-8
+# sudo -u postgres createdb -O ckan_default datastore_default -E utf-8
+# sudo -u postgres createuser -S -D -R -P -l -W ${PGPASSWORD} datastore_default
 
-# config ckan
-CKAN_INI="/etc/ckan/default/ckan.ini"
-source /usr/lib/ckan/default/bin/activate
-cd /usr/lib/ckan/default
-ckan generate config /etc/ckan/default/ckan.ini
-ckan config-tool ${CKAN_INI} "sqlalchemy.url = postgresql://ckan_default:${PGPASSWORD}@localhost/ckan_default"
-ckan config-tool ${CKAN_INI} "ckan.datastore.write_url = postgresql://ckan_default:${PGPASSWORD}@localhost/datastore_default"
-ckan config-tool ${CKAN_INI} "ckan.datastore.read_url = postgresql://datastore_default:${PGPASSWORD}@localhost/datastore_default"
-ckan config-tool ${CKAN_INI} "ckan.site_url = http://${host_ip}"
-ckan config-tool ${CKAN_INI} "solr_url = http://127.0.0.1:8983/solr/ckan"
-ckan config-tool ${CKAN_INI} "ckan.redis.url = redis://localhost:6379/0"
-ckan config-tool ${CKAN_INI} "ckan.storage_path = /var/lib/ckan/default"
-ckan config-tool ${CKAN_INI} "ckan.upload.user.mimetypes = image/png image/jpg image/gif"
-ckan config-tool ${CKAN_INI} "ckan.locale_default = th"
-ckan config-tool ${CKAN_INI} "ckan.locale_order = en th"
-ckan config-tool ${CKAN_INI} "ckan.auth.allow_dataset_collaborators = true"
-ckan config-tool ${CKAN_INI} "ckanext.exat.security_center.ws_endpoint = https://exatservices.exat.co.th/Services_Security"
-ckan config-tool ${CKAN_INI} "ckanext.exat.security_center.client = ckanext.exat.lib.security_center:SoapSecurityClient"
-ckan config-tool ${CKAN_INI} "ckanext.exat.assign_default_organization = true"
-ckan config-tool ${CKAN_INI} "ckanext.exat.assign_personnel_organization = false"
-ckan config-tool ${CKAN_INI} "ckanext.exat.override_stats = true"
+# ## config who.ini
+# sudo ln -s /usr/lib/ckan/default/src/ckan/who.ini /etc/ckan/default/who.ini
+# sudo chown -R `whoami` /etc/ckan/
 
-ckan -c ${CKAN_INI} db init
-ckan -c ${CKAN_INI} datastore set-permissions | sudo -u postgres psql --set ON_ERROR_STOP=1
+# # Get the host IP address based on the operating system
+# if [[ "$os" == "Darwin" ]]; then
+#     # macOS
+#     host_ip=$(ifconfig | grep "inet " | grep -Fv 127.0.0.1 | awk '{print $2}')
+# else
+#     # Ubuntu and other Linux distributions
+#     host_ip=$(hostname -I | awk '{print $1}')
+# fi
 
-deactivate
+# # config ckan
+# CKAN_INI="/etc/ckan/default/ckan.ini"
+# source /usr/lib/ckan/default/bin/activate
+# cd /usr/lib/ckan/default
+# ckan generate config /etc/ckan/default/ckan.ini
+# ckan config-tool ${CKAN_INI} "sqlalchemy.url = postgresql://ckan_default:${PGPASSWORD}@localhost/ckan_default"
+# ckan config-tool ${CKAN_INI} "ckan.datastore.write_url = postgresql://ckan_default:${PGPASSWORD}@localhost/datastore_default"
+# ckan config-tool ${CKAN_INI} "ckan.datastore.read_url = postgresql://datastore_default:${PGPASSWORD}@localhost/datastore_default"
+# ckan config-tool ${CKAN_INI} "ckan.site_url = http://${host_ip}"
+# ckan config-tool ${CKAN_INI} "solr_url = http://127.0.0.1:8983/solr/ckan"
+# ckan config-tool ${CKAN_INI} "ckan.redis.url = redis://localhost:6379/0"
+# ckan config-tool ${CKAN_INI} "ckan.storage_path = /var/lib/ckan/default"
+# ckan config-tool ${CKAN_INI} "ckan.upload.user.mimetypes = image/png image/jpg image/gif"
+# ckan config-tool ${CKAN_INI} "ckan.locale_default = th"
+# ckan config-tool ${CKAN_INI} "ckan.locale_order = en th"
+# ckan config-tool ${CKAN_INI} "ckan.auth.allow_dataset_collaborators = true"
+# ckan config-tool ${CKAN_INI} "ckanext.exat.security_center.ws_endpoint = https://exatservices.exat.co.th/Services_Security"
+# ckan config-tool ${CKAN_INI} "ckanext.exat.security_center.client = ckanext.exat.lib.security_center:SoapSecurityClient"
+# ckan config-tool ${CKAN_INI} "ckanext.exat.assign_default_organization = true"
+# ckan config-tool ${CKAN_INI} "ckanext.exat.assign_personnel_organization = false"
+# ckan config-tool ${CKAN_INI} "ckanext.exat.override_stats = true"
 
-## setup uwsgi
-source /usr/lib/ckan/default/bin/activate
-pip install uwsgi
-deactivate
-cp /usr/lib/ckan/default/src/ckan/ckan-uwsgi.ini /etc/ckan/default/
-cp /usr/lib/ckan/default/src/ckan/wsgi.py /etc/ckan/default/
+# ckan -c ${CKAN_INI} db init
+# ckan -c ${CKAN_INI} datastore set-permissions | sudo -u postgres psql --set ON_ERROR_STOP=1
 
-# setup supervisor
-sudo apt-get install -y supervisor
-sudo mkdir -p /var/log/ckan
-#sudo vi /etc/supervisor/conf.d/ckan-uwsgi.conf
-sudo cat << EOF > "/etc/supervisor/conf.d/ckan-uwsgi.conf"
-[program:ckan-uwsgi]
-command=/usr/lib/ckan/default/bin/uwsgi -i /etc/ckan/default/ckan-uwsgi.ini
-numprocs=1
-process_name=%(program_name)s-%(process_num)02d
-stdout_logfile=/var/log/ckan/ckan-uwsgi.stdout.log
-stderr_logfile=/var/log/ckan/ckan-uwsgi.stderr.log
-autostart=true
-autorestart=true
-startsecs=10
-stopwaitsecs = 600
-stopsignal=QUIT
-EOF
+# deactivate
 
-## nginx
-sudo apt-get install nginx
-#sudo vi /etc/nginx/sites-available/ckan
-sudo cat << EOF > "/etc/nginx/sites-available/ckan"
-proxy_cache_path /var/cache/nginx/proxycache levels=1:2 keys_zone=cache:30m max_size=250m;
-proxy_temp_path /tmp/nginx_proxy 1 2;
+# ## setup uwsgi
+# source /usr/lib/ckan/default/bin/activate
+# pip install uwsgi
+# deactivate
+# cp /usr/lib/ckan/default/src/ckan/ckan-uwsgi.ini /etc/ckan/default/
+# cp /usr/lib/ckan/default/src/ckan/wsgi.py /etc/ckan/default/
 
-server {
-    client_max_body_size 100M;
-    server_tokens off;
-    location / {
-        proxy_pass http://127.0.0.1:8080/;
-        proxy_set_header X-Forwarded-For $remote_addr;
-        proxy_set_header Host $host;
-        proxy_cache cache;
-        proxy_cache_bypass $cookie_auth_tkt;
-        proxy_no_cache $cookie_auth_tkt;
-        proxy_cache_valid 30m;
-        proxy_cache_key $host$scheme$proxy_host$request_uri;
-    }
-}
-EOF
+# # setup supervisor
+# sudo apt-get install -y supervisor
+# sudo mkdir -p /var/log/ckan
+# #sudo vi /etc/supervisor/conf.d/ckan-uwsgi.conf
+# sudo cat << EOF > "/etc/supervisor/conf.d/ckan-uwsgi.conf"
+# [program:ckan-uwsgi]
+# command=/usr/lib/ckan/default/bin/uwsgi -i /etc/ckan/default/ckan-uwsgi.ini
+# numprocs=1
+# process_name=%(program_name)s-%(process_num)02d
+# stdout_logfile=/var/log/ckan/ckan-uwsgi.stdout.log
+# stderr_logfile=/var/log/ckan/ckan-uwsgi.stderr.log
+# autostart=true
+# autorestart=true
+# startsecs=10
+# stopwaitsecs = 600
+# stopsignal=QUIT
+# EOF
 
-sudo rm -r /etc/nginx/sites-enabled/default
-sudo ln -s /etc/nginx/sites-available/ckan /etc/nginx/sites-enabled/ckan
-sudo mkdir -p /var/cache/nginx/proxycache && sudo chown www-data /var/cache/nginx/proxycache
+# ## nginx
+# sudo apt-get install nginx
+# #sudo vi /etc/nginx/sites-available/ckan
+# sudo cat << EOF > "/etc/nginx/sites-available/ckan"
+# proxy_cache_path /var/cache/nginx/proxycache levels=1:2 keys_zone=cache:30m max_size=250m;
+# proxy_temp_path /tmp/nginx_proxy 1 2;
 
-# file permissions
-sudo chown -R www-data:www-data /var/lib/ckan
-sudo chown -R www-data:www-data /usr/lib/ckan/default/src/ckan/ckan/public
-sudo chown -R www-data:www-data /var/lib/ckan/default
+# server {
+#     client_max_body_size 100M;
+#     server_tokens off;
+#     location / {
+#         proxy_pass http://127.0.0.1:8080/;
+#         proxy_set_header X-Forwarded-For $remote_addr;
+#         proxy_set_header Host $host;
+#         proxy_cache cache;
+#         proxy_cache_bypass $cookie_auth_tkt;
+#         proxy_no_cache $cookie_auth_tkt;
+#         proxy_cache_valid 30m;
+#         proxy_cache_key $host$scheme$proxy_host$request_uri;
+#     }
+# }
+# EOF
 
-# restart service
-sudo supervisorctl reload
-sudo service nginx restart
+# sudo rm -r /etc/nginx/sites-enabled/default
+# sudo ln -s /etc/nginx/sites-available/ckan /etc/nginx/sites-enabled/ckan
+# sudo mkdir -p /var/cache/nginx/proxycache && sudo chown www-data /var/cache/nginx/proxycache
+
+# # file permissions
+# sudo chown -R www-data:www-data /var/lib/ckan
+# sudo chown -R www-data:www-data /usr/lib/ckan/default/src/ckan/ckan/public
+# sudo chown -R www-data:www-data /var/lib/ckan/default
+
+# # restart service
+# sudo supervisorctl reload
+# sudo service nginx restart
