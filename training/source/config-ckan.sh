@@ -43,8 +43,6 @@ ckan config-tool ${CKAN_INI} "ckan.auth.allow_dataset_collaborators = true"
 ckan -c ${CKAN_INI} db init
 ckan -c ${CKAN_INI} datastore set-permissions | sudo -u postgres psql --set ON_ERROR_STOP=1
 
-paster --plugin=ckanext-discovery search_suggestions init -c ${CKAN_INI}
-
 deactivate
 
 ## setup uwsgi
