@@ -39,6 +39,14 @@ sudo chown -R `whoami` /var/lib/ckan/default && sudo chmod -R 775 /var/lib/ckan
 sudo mkdir -p /etc/ckan/default
 sudo chown -R `whoami` /etc/ckan/default
 
+## python environment
+virtualenv --python=python2 /usr/lib/ckan/default
+source /usr/lib/ckan/default/bin/activate
+cd /usr/lib/ckan/default
+pip install --upgrade pip
+pip install setuptools==44.1.0
+deactivate
+
 ## install CKAN
 source /usr/lib/ckan/default/bin/activate
 cd /usr/lib/ckan/default
@@ -68,11 +76,3 @@ sudo -u postgres createdb -O ckan_default datastore_default -E utf-8
 echo "Please CKAN_DATASTORE_PASSWORD"
 sudo -u postgres createuser -S -D -R -P -l datastore_default
 
-
-## python environment
-virtualenv --python=python2 /usr/lib/ckan/default
-source /usr/lib/ckan/default/bin/activate
-cd /usr/lib/ckan/default
-pip install --upgrade pip
-pip install setuptools==44.1.0
-deactivate
