@@ -22,13 +22,6 @@ export CKAN_DATASTORE_PASSWORD="{รหัสที่ได้ตั้งไ�
 curl -sSL https://raw.githubusercontent.com/theexatdev/exat-common-data/main/training/source/config-ckan.sh | bash
 ```
 
-### เพิ่ม sysadmin
-```sh
-source /usr/lib/ckan/default/bin/activate
-ckan -c /etc/ckan/default/ckan.ini sysadmin add ckan_admin
-deactivate
-```
-
 ## ติดตั้ง extensions สำหรัน Open-D
 ```sh
 curl -sSL https://raw.githubusercontent.com/theexatdev/exat-common-data/main/training/source/install-opend.sh | bash
@@ -49,4 +42,14 @@ curl -sSL https://raw.githubusercontent.com/theexatdev/exat-common-data/main/tra
 ### initialial extension
 ```sh
 curl -sSL https://raw.githubusercontent.com/theexatdev/exat-common-data/main/training/source/init-extensions.sh | bash
+```
+
+### เพิ่ม sysadmin
+```sh
+cd /usr/lib/ckan/default
+source /usr/lib/ckan/default/bin/activate
+sudo chown -R ckan:www-data /var/lib/ckan/default
+ckan -c /etc/ckan/default/ckan.ini sysadmin add ckan_admin
+sudo chown -R www-data:www-data /var/lib/ckan/default
+deactivate
 ```
