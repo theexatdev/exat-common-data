@@ -53,15 +53,15 @@ sudo service solr restart
 cd ~
 
 ## create postgresql user and db
-dbpassword="ckan1234"
-export PGPASSWORD="$dbpassword"
-echo "Please password as ckan1234"
+
+echo "Please CKAN_DB_PASSWORD"
 sudo -u postgres createuser -S -D -R -P ckan_default
 sudo -u postgres createdb -O ckan_default ckan_default -E utf-8
 sudo -u postgres createdb -O ckan_default datastore_default -E utf-8
+
+echo "Please CKAN_DATASTORE_PASSWORD"
 sudo -u postgres createuser -S -D -R -P -l datastore_default
 
-unset PGPASSWORD
 
 ## python environment
 virtualenv --python=python2 /usr/lib/ckan/default

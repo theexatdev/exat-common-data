@@ -1,13 +1,20 @@
 #!/bin/bash
 
+if [ -z "$CKAN_DB_PASSWORD" ]; then
+    echo "ERROR: CKAN_DB_PASSWORD environment variable is not set or empty."
+    exit 1
+fi
+
+if [ -z "$CKAN_DATASTORE_PASSWORD" ]; then
+    echo "ERROR: CKAN_DATASTORE_PASSWORD environment variable is not set or empty."
+    exit 1
+fi
+
 ## install CKAN
 source /usr/lib/ckan/default/bin/activate
 cd /usr/lib/ckan/default
 pip install -e 'git+https://github.com/ckan/ckan.git@ckan-2.9.5#egg=ckan[requirements-py2]'
 deactivate
-
-## create postgresql user and db
-dbpassword="ckan1234"
 
 ## config who.ini
 sudo ln -s /usr/lib/ckan/default/src/ckan/who.ini /etc/ckan/default/who.ini
@@ -27,9 +34,9 @@ CKAN_INI="/etc/ckan/default/ckan.ini"
 source /usr/lib/ckan/default/bin/activate
 cd /usr/lib/ckan/default
 ckan generate config /etc/ckan/default/ckan.ini
-ckan config-tool ${CKAN_INI} "sqlalchemy.url = postgresql://ckan_default:${dbpassword}@localhost/ckan_default"
-ckan config-tool ${CKAN_INI} "ckan.datastore.write_url = postgresql://ckan_default:${dbpassword}@localhost/datastore_default"
-ckan config-tool ${CKAN_INI} "ckan.datastore.read_url = postgresql://datastore_default:${dbpassword}@localhost/datastore_default"
+ckan config-tool ${CKAN_INI} "sqlalchemy.url = postgresql://ckan_default:${CKAN_DB_PASSWORD}@localhost/ckan_default"
+ckan config-tool ${CKAN_INI} "ckan.datastore.write_url = postgresql://ckan_default:${CKAN_DB_PASSWORD}@localhost/datastore_default"
+ckan config-tool ${CKAN_INI} "ckan.datastore.read_url = postgresql://datastore_default:${CKAN_DATASTORE_PASSWORD}@localhost/datastore_default"
 ckan config-tool ${CKAN_INI} "ckan.site_url = http://${host_ip}"
 ckan config-tool ${CKAN_INI} "solr_url = http://127.0.0.1:8983/solr/ckan"
 ckan config-tool ${CKAN_INI} "ckan.redis.url = redis://localhost:6379/0"

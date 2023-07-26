@@ -1,5 +1,10 @@
 #!/bin/bash
 
+if [ -z "$CKAN_DB_PASSWORD" ]; then
+    echo "ERROR: CKAN_DB_PASSWORD environment variable is not set or empty."
+    exit 1
+fi
+
 ## install CKAN
 source /usr/lib/ckan/default/bin/activate
 cd /usr/lib/ckan/default
@@ -20,11 +25,10 @@ pip install -e 'git+https://gitlab.nectec.or.th/opend/ckanext-pages.git#egg=ckan
 pip install -r src/ckanext-pages/requirements.txt
 
 # config ckan
-dbpassword="ckan1234"
 CKAN_INI="/etc/ckan/default/ckan.ini"
 ckan config-tool ${CKAN_INI} "ckan.plugins = discovery search_suggestions thai_gdc stats image_view text_view recline_view resource_proxy webpage_view datastore xloader dga_stats scheming_datasets pdf_view hierarchy_display hierarchy_form dcat dcat_json_interface structured_data pages"
 ckan config-tool ${CKAN_INI} "ckan.views.default_views = image_view text_view recline_view webpage_view pdf_view"
-ckan config-tool ${CKAN_INI} "ckanext.xloader.jobs_db.uri = postgresql://ckan_default:${dbpassword}@localhost/ckan_default"
+ckan config-tool ${CKAN_INI} "ckanext.xloader.jobs_db.uri = postgresql://ckan_default:${CKAN_DB_PASSWORD}@localhost/ckan_default"
 ckan config-tool ${CKAN_INI} "scheming.dataset_schemas = ckanext.thai_gdc:ckan_dataset.json"
 ckan config-tool ${CKAN_INI} "ckanext.xloader.just_load_with_messytables = true"
 ckan config-tool ${CKAN_INI} "ckanext.xloader.ssl_verify = false"
