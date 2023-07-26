@@ -56,3 +56,15 @@ docker compose up -d
 ```sh
 docker compose logs -f
 ```
+
+
+### กำหนดค่าเริ่มต้นสำหรับ exat
+```sh
+docker compose exec -u ckan ckan sh
+cd /srv/app
+source /srv/app/bin/activate
+paster --plugin=ckanext-discovery search_suggestions init -c/srv/app/ckan.ini
+ckan -c /srv/app/ckan.ini exat-init
+deactivate
+exit
+```
