@@ -2,7 +2,7 @@
 
 ## ติดตั้งโปรแกรม และ package ที่จำเป็น
 ```sh
-curl https://raw.githubusercontent.com/theexatdev/exat-common-data/main/training/source/prepare-server.sh | bash
+curl -sSL https://raw.githubusercontent.com/theexatdev/exat-common-data/main/training/source/prepare-server.sh | bash
 ```
 
 ### ตรวจสอบการทำงาน
@@ -19,7 +19,7 @@ export CKAN_DATASTORE_PASSWORD="{รหัสที่ได้ตั้งไ�
 
 ## ตั้งค่า CKAN
 ```sh
-curl https://raw.githubusercontent.com/theexatdev/exat-common-data/main/training/source/config-ckan.sh | bash
+curl -sSL https://raw.githubusercontent.com/theexatdev/exat-common-data/main/training/source/config-ckan.sh | bash
 ```
 
 ### เพิ่ม sysadmin
@@ -31,22 +31,22 @@ deactivate
 
 ## ติดตั้ง extensions สำหรัน Open-D
 ```sh
-curl https://raw.githubusercontent.com/theexatdev/exat-common-data/main/training/source/install-opend.sh | bash
+curl -sSL https://raw.githubusercontent.com/theexatdev/exat-common-data/main/training/source/install-opend.sh | bash
 ```
 
 ## ตั้งค่า cron job
 ```sh
-curl https://raw.githubusercontent.com/theexatdev/exat-common-data/main/training/source/cron-jobs.sh | bash
+curl -sSL https://raw.githubusercontent.com/theexatdev/exat-common-data/main/training/source/cron-jobs.sh | bash
 ```
 
 
 ## ติดตั้ง extension ckanext-exat
 ```sh
 export GIT_URL="{git url} เช่น https://{user}:{token}@git.sbpds.com/government/exat/common/ckanext.git"
-curl https://raw.githubusercontent.com/theexatdev/exat-common-data/main/training/source/install-exat.sh | bash
+curl -sSL https://raw.githubusercontent.com/theexatdev/exat-common-data/main/training/source/install-exat.sh | bash
 ```
 
 ### initialial extension
 ```sh
-curl https://raw.githubusercontent.com/theexatdev/exat-common-data/main/training/source/init-extensions.sh | bash
+curl -sSL https://raw.githubusercontent.com/theexatdev/exat-common-data/main/training/source/init-extensions.sh | bash
 ```
