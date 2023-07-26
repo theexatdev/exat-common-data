@@ -39,6 +39,12 @@ sudo chown -R `whoami` /var/lib/ckan/default && sudo chmod -R 775 /var/lib/ckan
 sudo mkdir -p /etc/ckan/default
 sudo chown -R `whoami` /etc/ckan/default
 
+## install CKAN
+source /usr/lib/ckan/default/bin/activate
+cd /usr/lib/ckan/default
+pip install -e 'git+https://github.com/ckan/ckan.git@ckan-2.9.5#egg=ckan[requirements-py2]'
+deactivate
+
 ## config Apache Solr
 sudo su solr
 cd /opt/solr/bin

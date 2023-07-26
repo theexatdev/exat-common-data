@@ -17,9 +17,9 @@ export CKAN_DB_PASSWORD="{รหัสที่ได้ตั้งไว้}"
 export CKAN_DATASTORE_PASSWORD="{รหัสที่ได้ตั้งไว้}"
 ```
 
-## ติดตั้ง CKAN
+## ตั้งค่า CKAN
 ```sh
-curl https://raw.githubusercontent.com/theexatdev/exat-common-data/main/training/source/install-ckan.sh | bash
+curl https://raw.githubusercontent.com/theexatdev/exat-common-data/main/training/source/config-ckan.sh | bash
 ```
 
 ### เพิ่ม sysadmin

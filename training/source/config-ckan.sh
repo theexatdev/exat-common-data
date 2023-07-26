@@ -10,12 +10,6 @@ if [ -z "$CKAN_DATASTORE_PASSWORD" ]; then
     exit 1
 fi
 
-## install CKAN
-source /usr/lib/ckan/default/bin/activate
-cd /usr/lib/ckan/default
-pip install -e 'git+https://github.com/ckan/ckan.git@ckan-2.9.5#egg=ckan[requirements-py2]'
-deactivate
-
 ## config who.ini
 sudo ln -s /usr/lib/ckan/default/src/ckan/who.ini /etc/ckan/default/who.ini
 sudo chown -R `whoami` /etc/ckan/
